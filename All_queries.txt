@@ -201,13 +201,23 @@ ORDER BY avg_rabies DESC
 LIMIT 10;
 
 -- point 4
-SELECT
-    Year,
-    MAKEDATE(Year, 1) AS first_january_date,
-    CURDATE() AS todays_date,
-    TIMESTAMPDIFF(YEAR, MAKEDATE(Year, 1), CURDATE()) AS year_difference
-FROM pandemic.infectious_cases
+ALTER TABLE pandemic.infectious_cases
+ADD COLUMN first_january_date DATE,
+ADD COLUMN todays_date DATE,
+ADD COLUMN year_difference INT;
+
+UPDATE pandemic.infectious_cases
+SET 
+    first_january_date = MAKEDATE(CAST(Year AS UNSIGNED), 1),
+    todays_date = CURDATE(),
+    year_difference = TIMESTAMPDIFF(YEAR, MAKEDATE(CAST(Year AS UNSIGNED), 1), CURDATE())
 WHERE Year IS NOT NULL AND Year != '';
+
+select Year,
+	   first_january_date,
+	   todays_date,
+       year_difference
+from pandemic.infectious_cases;
 
 -- point 5
 DROP FUNCTION IF EXISTS pandemic.GetYearDifference;
