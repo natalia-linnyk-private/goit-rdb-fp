@@ -236,7 +236,7 @@ DELIMITER ;
 
 SELECT
     Year,
-    CURDATE() AS todays_date,
+    todays_date,
     pandemic.GetYearDifference(Year) AS year_difference
 FROM pandemic.infectious_cases
 WHERE Year IS NOT NULL AND Year != '';
