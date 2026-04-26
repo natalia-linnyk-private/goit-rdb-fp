@@ -1,0 +1,232 @@
+-- point 1
+DROP DATABASE IF EXISTS pandemic;
+CREATE DATABASE pandemic;
+USE pandemic;
+
+select count(*) from pandemic.infectious_cases; -- should be 10521
+
+-- point 2
+-- Normalized tables: countries, diseases, infectious_cases_records
+CREATE TABLE pandemic.countries (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    country_code VARCHAR(10) NULL,
+    country_name VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE pandemic.diseases (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    disease_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE pandemic.infectious_cases_records (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    country_id INT NOT NULL,
+    year INT NOT NULL,
+    disease_id INT NOT NULL,
+    cases_count DOUBLE, 
+    FOREIGN KEY (country_id) REFERENCES countries(id),
+    FOREIGN KEY (disease_id) REFERENCES diseases(id)
+);
+
+-- Fill table counties with values from infectious_cases
+INSERT INTO pandemic.countries (country_name, country_code)
+SELECT 
+    Entity AS country_name,
+    MAX(Code) AS country_code
+FROM pandemic.infectious_cases
+WHERE Entity IS NOT NULL AND Entity != ''
+GROUP BY Entity;
+
+select * from pandemic.countries;
+
+-- Fill table diseases with values from infectious_cases
+INSERT INTO pandemic.diseases (disease_name) VALUES 
+('Yaws'),                  -- column Number_yaws
+('Polio'),                 -- column polio_cases
+('Guinea worm disease'),   -- column cases_guinea_worm
+('Rabies'),                -- column Number_rabies
+('Malaria'),               -- column Number_malaria
+('HIV'),                   -- column Number_hiv
+('Tuberculosis'),          -- column Number_tuberculosis
+('Smallpox'),              -- column Number_smallpox
+('Cholera');               -- column Number_cholera_cases
+
+select * from pandemic.diseases;
+
+-- Fill infectious_cases_records table with data from original infectious_cases table
+-- for Yaws
+INSERT INTO pandemic.infectious_cases_records (country_id, year, disease_id, cases_count)
+SELECT 
+    c.id,
+    ic.Year,
+    d.id,
+    CASE 
+        WHEN ic.polio_cases IS NULL OR ic.polio_cases = '' THEN NULL
+        ELSE CAST(ic.polio_cases AS DOUBLE)
+    END
+FROM pandemic.infectious_cases ic
+INNER JOIN pandemic.countries c ON c.country_name = ic.Entity
+INNER JOIN pandemic.diseases d ON d.disease_name = 'Yaws';
+
+-- for Polio
+INSERT INTO pandemic.infectious_cases_records (country_id, year, disease_id, cases_count)
+SELECT 
+    c.id,
+    ic.Year,
+    d.id,
+    CASE 
+        WHEN ic.polio_cases IS NULL OR ic.polio_cases = '' THEN NULL
+        ELSE CAST(ic.polio_cases AS DOUBLE)
+    END
+FROM pandemic.infectious_cases ic
+INNER JOIN pandemic.countries c ON c.country_name = ic.Entity
+INNER JOIN pandemic.diseases d ON d.disease_name = 'Polio';
+  
+  select * from pandemic.infectious_cases_records;
+
+-- for Guinea worm disease
+INSERT INTO pandemic.infectious_cases_records (country_id, year, disease_id, cases_count)
+SELECT 
+    c.id,
+    ic.Year,
+    d.id,
+    CASE 
+        WHEN ic.polio_cases IS NULL OR ic.polio_cases = '' THEN NULL
+        ELSE CAST(ic.polio_cases AS DOUBLE)
+    END
+FROM pandemic.infectious_cases ic
+INNER JOIN pandemic.countries c ON c.country_name = ic.Entity
+INNER JOIN pandemic.diseases d ON d.disease_name = 'Guinea worm disease';
+
+-- for Rabies
+INSERT INTO pandemic.infectious_cases_records (country_id, year, disease_id, cases_count)
+SELECT 
+    c.id,
+    ic.Year,
+    d.id,
+    CASE 
+        WHEN ic.polio_cases IS NULL OR ic.polio_cases = '' THEN NULL
+        ELSE CAST(ic.polio_cases AS DOUBLE)
+    END
+FROM pandemic.infectious_cases ic
+INNER JOIN pandemic.countries c ON c.country_name = ic.Entity
+INNER JOIN pandemic.diseases d ON d.disease_name = 'Rabies';
+
+-- for Malaria
+INSERT INTO pandemic.infectious_cases_records (country_id, year, disease_id, cases_count)
+SELECT 
+    c.id,
+    ic.Year,
+    d.id,
+    CASE 
+        WHEN ic.polio_cases IS NULL OR ic.polio_cases = '' THEN NULL
+        ELSE CAST(ic.polio_cases AS DOUBLE)
+    END
+FROM pandemic.infectious_cases ic
+INNER JOIN pandemic.countries c ON c.country_name = ic.Entity
+INNER JOIN pandemic.diseases d ON d.disease_name = 'Malaria';
+
+-- for HIV
+INSERT INTO pandemic.infectious_cases_records (country_id, year, disease_id, cases_count)
+SELECT 
+    c.id,
+    ic.Year,
+    d.id,
+    CASE 
+        WHEN ic.polio_cases IS NULL OR ic.polio_cases = '' THEN NULL
+        ELSE CAST(ic.polio_cases AS DOUBLE)
+    END
+FROM pandemic.infectious_cases ic
+INNER JOIN pandemic.countries c ON c.country_name = ic.Entity
+INNER JOIN pandemic.diseases d ON d.disease_name = 'HIV';
+
+-- for Tuberculosis
+INSERT INTO pandemic.infectious_cases_records (country_id, year, disease_id, cases_count)
+SELECT 
+    c.id,
+    ic.Year,
+    d.id,
+    CASE 
+        WHEN ic.polio_cases IS NULL OR ic.polio_cases = '' THEN NULL
+        ELSE CAST(ic.polio_cases AS DOUBLE)
+    END
+FROM pandemic.infectious_cases ic
+INNER JOIN pandemic.countries c ON c.country_name = ic.Entity
+INNER JOIN pandemic.diseases d ON d.disease_name = 'Tuberculosis';
+
+-- for Smallpox
+INSERT INTO pandemic.infectious_cases_records (country_id, year, disease_id, cases_count)
+SELECT 
+    c.id,
+    ic.Year,
+    d.id,
+    CASE 
+        WHEN ic.polio_cases IS NULL OR ic.polio_cases = '' THEN NULL
+        ELSE CAST(ic.polio_cases AS DOUBLE)
+    END
+FROM pandemic.infectious_cases ic
+INNER JOIN pandemic.countries c ON c.country_name = ic.Entity
+INNER JOIN pandemic.diseases d ON d.disease_name = 'Smallpox';
+
+-- for Cholera
+INSERT INTO pandemic.infectious_cases_records (country_id, year, disease_id, cases_count)
+SELECT 
+    c.id,
+    ic.Year,
+    d.id,
+    CASE 
+        WHEN ic.polio_cases IS NULL OR ic.polio_cases = '' THEN NULL
+        ELSE CAST(ic.polio_cases AS DOUBLE)
+    END
+FROM pandemic.infectious_cases ic
+INNER JOIN pandemic.countries c ON c.country_name = ic.Entity
+INNER JOIN pandemic.diseases d ON d.disease_name = 'Cholera';
+
+-- results for point 2
+select count(*) from pandemic.infectious_cases_records; -- should be 10521 x 9 = 94689
+
+-- point 3
+SELECT 
+    Entity,
+    Code,
+    AVG(CAST(Number_rabies AS DOUBLE)) AS avg_rabies,
+    MIN(CAST(Number_rabies AS DOUBLE)) AS min_rabies,
+    MAX(CAST(Number_rabies AS DOUBLE)) AS max_rabies,
+    SUM(CAST(Number_rabies AS DOUBLE)) AS sum_rabies
+FROM pandemic.infectious_cases
+WHERE Number_rabies IS NOT NULL 
+  AND Number_rabies != ''
+GROUP BY Entity, Code
+ORDER BY avg_rabies DESC
+LIMIT 10;
+
+-- point 4
+SELECT
+    Year,
+    MAKEDATE(Year, 1) AS first_january_date,
+    CURDATE() AS todays_date,
+    TIMESTAMPDIFF(YEAR, MAKEDATE(Year, 1), CURDATE()) AS year_difference
+FROM pandemic.infectious_cases
+WHERE Year IS NOT NULL AND Year != '';
+
+-- point 5
+DROP FUNCTION IF EXISTS pandemic.GetYearDifference;
+
+DELIMITER //
+CREATE FUNCTION pandemic.GetYearDifference(year_text TEXT)
+RETURNS INT
+DETERMINISTIC
+NO SQL
+BEGIN
+    DECLARE year_num INT;
+    SET year_num = CAST(year_text AS UNSIGNED);
+    RETURN TIMESTAMPDIFF(YEAR, MAKEDATE(year_num, 1), CURDATE());
+END //
+DELIMITER ;
+
+SELECT
+    Year,
+    CURDATE() AS todays_date,
+    pandemic.GetYearDifference(Year) AS year_difference
+FROM pandemic.infectious_cases
+WHERE Year IS NOT NULL AND Year != '';
